@@ -6,7 +6,9 @@ services:
     build:
        context: ./app
        dockerfile: Dockerfile.prod
-    command: gunicorn django_project.wsgi:application --bind 0.0.0.0:8000
+    container_name: depl_gunicorn
+    restart: unless-stopped
+    command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
     # Открываем порт 8000 наружу
     expose:
       - 8000
@@ -22,8 +24,10 @@ services:
     depends_on:
       - db
   db:
-    image: postgres:12.0-alpine
+    image: postgres
     # Том, куда будут сохранятся данные базы
+    container_name: depl_postgres
+    restart: unless-stopped
     volumes:
       - postgres_volume:/var/lib/postgresql/data/
     # Переменные, которые используются только postgre
@@ -32,12 +36,14 @@ services:
   nginx:
     build: ./nginx
     # Подключаем статические и медиа файлы
+    container_name: depl_nginx
+    restart: unless-stopped
     volumes:
       - static_volume:/home/app/web/static
       - media_volume:/home/app/web/media
     # Порт внешний/внутренний
     ports:
-      - 1337:80
+      - 80:80
     depends_on:
       - web
 

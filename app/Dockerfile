@@ -1,4 +1,4 @@
-FROM python:3.8.6-alpine
+FROM python:3.10.6-alpine
 
 # рабочая директория внутри проекта
 WORKDIR /usr/src/app

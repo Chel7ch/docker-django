@@ -1,4 +1,4 @@
-FROM nginx
+FROM nginx:1.21.0-alpine
 
 # RUN mkdir -p /home/app
 # RUN useradd app
