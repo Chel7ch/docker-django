@@ -16,11 +16,11 @@ RUN pip install --upgrade pip
 
 # проверка кода через линтер
 RUN pip install flake8
-COPY app .
+COPY ./app ../app
 RUN flake8 --ignore=E501,F401 /usr/src/app/app
 
 # установка зависимостей
-COPY requirements.txt .
+COPY ./dockerfiles/requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
 
 
@@ -50,11 +50,11 @@ COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
-# копирование entrypoint-prod.sh
-COPY entrypoint.sh $APP_HOME
+# копирование entrypoint-.sh
+COPY ./dockerfiles/entrypoint.sh $APP_HOME
 
 # копирование проекта Django
-COPY app $APP_HOME
+COPY ./app $APP_HOME
 
 # изменение прав для пользователя app
 RUN chown -R app:app $APP_HOME

@@ -5,7 +5,7 @@ services:
     # Билд образа для продакшена
     build:
        context: .
-       dockerfile: python.dockerfile
+       dockerfile: dockerfiles/python.dockerfile
     container_name: depl_gunicorn
     restart: unless-stopped
     command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
@@ -34,7 +34,9 @@ services:
     env_file:
       - .env.db
   nginx:
-    build: ./nginx
+    build:
+      context: ./dockerfiles
+      dockerfile: nginx.dockerfile
     # Подключаем статические и медиа файлы
     container_name: depl_nginx
     restart: unless-stopped

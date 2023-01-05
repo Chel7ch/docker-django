@@ -7,4 +7,4 @@ FROM nginx:1.21.0-alpine
 # RUN mkdir $APP_HOME
 # WORKDIR $APP_HOME
 RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d
+COPY nginx/nginx.conf /etc/nginx/conf.d
