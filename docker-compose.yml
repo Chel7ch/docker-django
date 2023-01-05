@@ -4,8 +4,8 @@ services:
   web:
     # Билд образа для продакшена
     build:
-       context: ./app
-       dockerfile: Dockerfile
+       context: .
+       dockerfile: python.dockerfile
     container_name: depl_gunicorn
     restart: unless-stopped
     command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
