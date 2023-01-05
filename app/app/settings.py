@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # Настройки для базы данных
 DATABASES = {
     'default': {
-        # В случае, если в файле .env.prod или .env.dev были прописаны переменные
+        # В случае, если в файле .env или .env.dev были прописаны переменные
         # будут использоваться они. Если переменной в окружении нет
         # будет использоваться 2-ое значение
         'ENGINE': environ.get('POSTGRES_ENGINE', 'django.db.backends.sqlite3'),

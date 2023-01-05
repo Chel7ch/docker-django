@@ -2,31 +2,52 @@ version: '3.8'
 
 services:
   web:
-    # Запуск образа для локальной разработки
-    build: ./app
-    container_name: runserver
+    # Билд образа для продакшена
+    build:
+       context: ./app
+       dockerfile: Dockerfile
+    container_name: depl_gunicorn
     restart: unless-stopped
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
+    # Открываем порт 8000 наружу
+    expose:
+      - 8000
+    # Подключаем статические и медиа файлы
     volumes:
-      - ./app/:/usr/src/app/
-    ports:
-      - 8000:8000
-    # Переменные, которые в основном будут использоваться в settings.py
+      - static_volume:/home/app/web/static
+      - media_volume:/home/app/web/media
+    # Файл с переменными, которые будут использоваться
+    # в основном в setting.py
     env_file:
-      - ./.env.dev
+      - .env
+    # Дожидаемся запуска db
+    depends_on:
+      - db
   db:
-    # Образ и версия базы, которую мы будем использовать
     image: postgres
+    # Том, куда будут сохранятся данные базы
     container_name: depl_postgres
     restart: unless-stopped
-    # Внешний том(volume) и место где он будет подключен внутри контейнера
     volumes:
       - postgres_volume:/var/lib/postgresql/data/
-    environment:
-      # Учетные данные, которые можно будет переопределить
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=hello
-      - POSTGRES_DB=postgres
+    # Переменные, которые используются только postgre
+    env_file:
+      - .env.db
+  nginx:
+    build: ./nginx
+    # Подключаем статические и медиа файлы
+    container_name: depl_nginx
+    restart: unless-stopped
+    volumes:
+      - static_volume:/home/app/web/static
+      - media_volume:/home/app/web/media
+    # Порт внешний/внутренний
+    ports:
+      - 80:80
+    depends_on:
+      - web
 
 volumes:
   postgres_volume:
+  static_volume:
+  media_volume:
